@@ -1,5 +1,6 @@
 package likelion14th.blog.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import likelion14th.blog.domain.Article;
 import likelion14th.blog.dto.response.ArticleResponse;
 import likelion14th.blog.repository.ArticleRepository;
@@ -20,5 +21,12 @@ public class ArticleService {
         articleRepository.save(article);
 
         return ArticleResponse.from(article);
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleResponse getOneArticle(long id){
+       Article article = articleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 10의 게시글을 찾을 수 없습니다."));
+
+       return ArticleResponse.from(article);
     }
 }
