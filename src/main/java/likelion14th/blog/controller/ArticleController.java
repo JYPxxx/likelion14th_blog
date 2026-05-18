@@ -4,11 +4,14 @@ import likelion14th.blog.dto.request.ArticleRequest;
 import likelion14th.blog.dto.request.UpdateArticleRequest;
 import likelion14th.blog.dto.response.ApiResponse;
 import likelion14th.blog.dto.response.ArticleDetailResponse;
+import likelion14th.blog.dto.response.ArticleSummaryResponse;
 import likelion14th.blog.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,5 +42,12 @@ public class ArticleController {
 
         return ResponseEntity.ok(ApiResponse.success(200, "게시글을 업데이트 하였습니다.", articleDetailResponse));
 
+    }
+
+    @GetMapping()
+    public ResponseEntity<ApiResponse<List<ArticleSummaryResponse>>> getArticles() {
+        List<ArticleSummaryResponse> articleDetailResponses = articleService.getArticles();
+
+        return ResponseEntity.ok(ApiResponse.success(200, "게시글 전체 조회에 성공하였습니다.", articleDetailResponses));
     }
 }

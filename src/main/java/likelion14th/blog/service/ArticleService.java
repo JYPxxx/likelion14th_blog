@@ -3,10 +3,13 @@ package likelion14th.blog.service;
 import jakarta.persistence.EntityNotFoundException;
 import likelion14th.blog.domain.Article;
 import likelion14th.blog.dto.response.ArticleDetailResponse;
+import likelion14th.blog.dto.response.ArticleSummaryResponse;
 import likelion14th.blog.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -37,5 +40,16 @@ public class ArticleService {
        article.update(title, content);
        articleRepository.save(article);
        return ArticleDetailResponse.from(article);
+    }
+
+    @Transactional
+    public List<ArticleSummaryResponse> getArticles() {
+       List<Article> articles = articleRepository.findAll();
+
+       List<ArticleSummaryResponse> articleResponses = articles.stream()
+               .map(ArticleSummaryResponse::from)
+               .toList();
+
+       return articleResponses;
     }
 }
