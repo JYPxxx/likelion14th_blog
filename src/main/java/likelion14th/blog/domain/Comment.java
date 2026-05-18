@@ -31,8 +31,8 @@ public class Comment {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    public Comment(Article article_id, String author, String content) {
-        this.article = article_id;
+    public Comment(String author, String content, Article article) {
+        this.article = article;
         this.author = author;
         this.content = content;
         this.createdAt = LocalDateTime.now();
