@@ -2,7 +2,6 @@ package likelion14th.blog.service;
 
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import likelion14th.blog.domain.Article;
 import likelion14th.blog.domain.Comment;
 import likelion14th.blog.dto.response.CommentResponse;
@@ -10,6 +9,9 @@ import likelion14th.blog.repository.ArticleRepository;
 import likelion14th.blog.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,5 +28,16 @@ public class CommentService {
 
         CommentResponse response = CommentResponse.of(article.getId(), comment);
         return response;
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponse> getComments(Long articleId) {
+        List<Comment> comments = commentRepository.findByArticleId(articleId);
+
+        List<CommentResponse> responses = comments.stream()
+                .map(comment -> CommentResponse.of(articleId, comment))
+                .toList();
+
+        return responses;
     }
 }

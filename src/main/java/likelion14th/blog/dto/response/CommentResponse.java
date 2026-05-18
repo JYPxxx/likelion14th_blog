@@ -17,6 +17,7 @@ public class CommentResponse {
                 .articleId(articleId)
                 .commentId(comment.getId())
                 .author(comment.getAuthor())
+                .content(comment.getContent())
                 .build();
     }
 }
