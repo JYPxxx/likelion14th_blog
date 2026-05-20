@@ -1,6 +1,8 @@
 package likelion14th.blog.controller;
 
+import jakarta.validation.Valid;
 import likelion14th.blog.dto.request.ArticleRequest;
+import likelion14th.blog.dto.request.DeleteArticleRequest;
 import likelion14th.blog.dto.request.UpdateArticleRequest;
 import likelion14th.blog.dto.response.ApiResponse;
 import likelion14th.blog.dto.response.ArticleDetailResponse;
@@ -21,7 +23,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<ArticleDetailResponse>> addArticle(@RequestBody ArticleRequest request) {
+    public ResponseEntity<ApiResponse<ArticleDetailResponse>> addArticle(@Valid @RequestBody ArticleRequest request) {
         ArticleDetailResponse articleDetailResponse =
                 articleService.addArticle(request.getTitle(), request.getContent(), request.getAuthor(), request.getPassword());
 
@@ -36,13 +38,6 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponse.success(200, "게시글 개별 조회에 성공하였습니다.", articleDetailResponse));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse<ArticleDetailResponse>> updateArticle(@PathVariable Long id, @RequestBody UpdateArticleRequest request) {
-        ArticleDetailResponse articleDetailResponse = articleService.updateArticle(id, request.getTitle(), request.getContent());
-
-        return ResponseEntity.ok(ApiResponse.success(200, "게시글을 업데이트 하였습니다.", articleDetailResponse));
-
-    }
 
     @GetMapping()
     public ResponseEntity<ApiResponse<List<ArticleSummaryResponse>>> getArticles() {
@@ -52,9 +47,20 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteArticle(@PathVariable Long id) {
-        articleService.deleteArticle(id);
-
+    public ResponseEntity<ApiResponse<Void>> deleteArticle(
+            @PathVariable Long id,
+            @RequestBody DeleteArticleRequest deleteArticleRequest) {
+        articleService.deleteArticle(id, deleteArticleRequest.getPassword());
         return ResponseEntity.ok(ApiResponse.success(204, "게시글을 삭제하는데 성공하였습니다."));
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<ArticleDetailResponse>> updateArticle(
+            @PathVariable Long id,
+            @RequestBody UpdateArticleRequest request) {
+        ArticleDetailResponse articleDetailResponse = articleService.updateArticle(id, request.getTitle(), request.getContent(), request.getPassword());
+
+        return ResponseEntity.ok(ApiResponse.success(200, "게시글을 업데이트 하였습니다.", articleDetailResponse));
+    }
+
 }

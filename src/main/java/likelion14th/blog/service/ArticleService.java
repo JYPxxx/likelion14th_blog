@@ -4,6 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import likelion14th.blog.domain.Article;
 import likelion14th.blog.dto.response.ArticleDetailResponse;
 import likelion14th.blog.dto.response.ArticleSummaryResponse;
+import likelion14th.blog.exception.ArticleNotFoundException;
+import likelion14th.blog.exception.PermissionDeniedException;
 import likelion14th.blog.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,14 +30,14 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public ArticleDetailResponse getOneArticle(long id){
-       Article article = articleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 10의 게시글을 찾을 수 없습니다."));
+       Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException("해당 10의 게시글을 찾을 수 없습니다."));
 
        return ArticleDetailResponse.from(article);
     }
 
     @Transactional
     public ArticleDetailResponse updateArticle(Long id, String title, String content){
-       Article article = articleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 10의 게시글을 찾을 수 없습니다."));
+       Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException("해당 10의 게시글을 찾을 수 없습니다."));
 
        article.update(title, content);
        articleRepository.save(article);
@@ -59,4 +61,31 @@ public class ArticleService {
 
        return null;
     }
+
+    @Transactional
+    public ArticleDetailResponse updateArticle(Long id, String title, String content, String password){
+       Article article = articleRepository.findById(id)
+               .orElseThrow(() -> new ArticleNotFoundException("해당 ID의 게시글을 찾을 수 없습니다."));
+
+       if (!article.getPassword().equals(password)){
+           throw new PermissionDeniedException("해당 게시글에 대한 수정 권한이 없습니다.");
+       }
+
+       article.update(title, content);
+
+       articleRepository.save(article);
+       return ArticleDetailResponse.from(article);
+    }
+
+    @Transactional
+    public void deleteArticle(Long id, String password) {
+       Article article = articleRepository.findById(id)
+               .orElseThrow(() -> new ArticleNotFoundException("해당 ID의 게시글을 찾을 수 없습니다."));
+
+       if (!article.getPassword().equals(password)){
+           throw new PermissionDeniedException("해당 게시글에 대한 삭제 권한이 없습니다.");
+       }
+       articleRepository.delete(article);
+    }
 }
+
