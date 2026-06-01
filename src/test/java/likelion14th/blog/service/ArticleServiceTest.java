@@ -49,6 +49,7 @@ class ArticleServiceTest {
         assertThat(response.getAuthor()).isEqualTo("박진영"); // .isEqualTo(author)이라고 적으셔도 됩니다.
 
     }
+
     @Test
     @DisplayName("게시글 조회 실패 - 존재하지 않는 ID")
     void getOneArticle_fail_notFound() {

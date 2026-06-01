@@ -30,7 +30,7 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public ArticleDetailResponse getOneArticle(long id){
-       Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException("해당 10의 게시글을 찾을 수 없습니다."));
+       Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException("해당 ID의 게시글을 찾을 수 없습니다."));
 
        return ArticleDetailResponse.from(article);
     }
